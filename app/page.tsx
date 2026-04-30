@@ -142,13 +142,6 @@ const benefitCards = [
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
   const isSignedIn = Boolean(session?.user);
-  const userName = session?.user?.name?.trim() || 'My Account';
-  const initials = userName
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('') || 'A';
 
   return (
     <main className="app-shell">
@@ -203,23 +196,7 @@ export default async function HomePage() {
                 <Link href="/listings" className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
                   Explore marketplace
                 </Link>
-                {isSignedIn ? (
-                  <Link href="/profile" className="account-pill group" aria-label="Open profile" title="My account">
-                    <span className="account-pill-avatar">
-                      {session?.user?.image ? (
-                        <Image
-                          src={session.user.image}
-                          alt={userName}
-                          width={40}
-                          height={40}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        initials
-                      )}
-                    </span>
-                  </Link>
-                ) : (
+                {!isSignedIn && (
                   <Link href="/auth/signin" className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
                     Login
                   </Link>
