@@ -14,7 +14,7 @@ export async function uploadImage(fileBuffer: Buffer, filename: string): Promise
   const signature = crypto.createHash('sha256').update(signatureStr).digest('hex');
 
   const form = new FormData();
-  form.append('file', new Blob([fileBuffer]));
+  form.append('file', new Blob([new Uint8Array(fileBuffer)]));
   form.append('api_key', CLOUDINARY_API_KEY);
   form.append('timestamp', timestamp);
   form.append('folder', folder);
