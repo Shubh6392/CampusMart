@@ -2,6 +2,11 @@ import { v2 as cloudinary } from 'cloudinary';
 
 export async function uploadImage(fileBuffer: Buffer, filename: string): Promise<string> {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+  console.log('Cloudinary config check:', {
+    cloud_name: CLOUDINARY_CLOUD_NAME,
+    api_key: CLOUDINARY_API_KEY,
+    has_secret: !!CLOUDINARY_API_SECRET
+  });
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     throw new Error('Cloudinary credentials are not configured');
   }
