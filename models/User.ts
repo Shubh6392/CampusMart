@@ -4,6 +4,11 @@ export interface IUser {
   name: string;
   email: string;
   image?: string;
+  bio?: string;
+  phone?: string;
+  location?: string;
+  availability?: string;
+  preferredContact?: 'messages' | 'email' | 'phone';
   passwordHash?: string;
   college: string;
   role: 'buyer' | 'seller' | 'admin';
@@ -19,6 +24,11 @@ const UserSchema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     image: { type: String },
+    bio: { type: String, default: '' },
+    phone: { type: String, default: '' },
+    location: { type: String, default: '' },
+    availability: { type: String, default: '' },
+    preferredContact: { type: String, enum: ['messages', 'email', 'phone'], default: 'messages' },
     passwordHash: { type: String },
     college: { type: String, required: true },
     role: { type: String, enum: ['buyer', 'seller', 'admin'], default: 'buyer' },

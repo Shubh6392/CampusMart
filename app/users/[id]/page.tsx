@@ -11,6 +11,7 @@ import Message from '@/models/Message';
 import User from '@/models/User';
 import Image from 'next/image';
 import { formatCurrency } from '@/lib/currency';
+import ProfileEditPanel from '@/components/profile/profile-edit-panel';
 
 function formatMemberSince(value?: Date | string) {
   if (!value) return 'Recently joined';
@@ -38,7 +39,7 @@ export default async function UserProfilePage({ params }: { params: { id: string
   await connectToDatabase();
 
   const user = await User.findById(params.id)
-    .select('name email image college role status domain createdAt')
+    .select('name email image bio phone location availability preferredContact college role status domain createdAt')
     .lean() as any;
 
   if (!user || user.status === 'banned') {
@@ -152,11 +153,12 @@ export default async function UserProfilePage({ params }: { params: { id: string
                       {user.name}
                     </h1>
                     <p className="muted-copy mt-3 max-w-2xl text-lg leading-8">
-                      {user.role === 'seller'
+                      {user.bio ||
+                      (user.role === 'seller'
                         ? 'Active campus seller with public listings, pricing history, and buyer activity.'
                         : user.role === 'admin'
                           ? 'Marketplace administrator profile.'
-                          : 'Verified campus member participating in the marketplace community.'}
+                          : 'Verified campus member participating in the marketplace community.')}
                     </p>
                   </div>
                 </div>
@@ -194,6 +196,12 @@ export default async function UserProfilePage({ params }: { params: { id: string
                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Account status</p>
                     <p className="mt-1 text-base font-semibold capitalize text-slate-900 dark:text-white">{user.status}</p>
                   </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Preferred contact</p>
+                    <p className="mt-1 text-base font-semibold capitalize text-slate-900 dark:text-white">
+                      {user.preferredContact === 'phone' ? 'Phone' : user.preferredContact === 'email' ? 'Email' : 'CampusMart messages'}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3">
@@ -211,6 +219,43 @@ export default async function UserProfilePage({ params }: { params: { id: string
                   )}
                 </div>
               </div>
+            </div>
+          </section>
+
+          {isOwner && (
+            <ProfileEditPanel
+              user={{
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                bio: user.bio,
+                phone: user.phone,
+                location: user.location,
+                availability: user.availability,
+                preferredContact: user.preferredContact,
+                college: user.college,
+                domain: user.domain,
+              }}
+            />
+          )}
+
+          <section className="grid gap-5 lg:grid-cols-3">
+            <div className="surface-panel rounded-[1.5rem] p-6">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Location</p>
+              <p className="mt-3 text-xl font-black text-slate-950 dark:text-white">{user.location || 'Not added yet'}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Helpful for planning campus pickup or item handoff.</p>
+            </div>
+            <div className="surface-panel rounded-[1.5rem] p-6">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Availability</p>
+              <p className="mt-3 text-xl font-black text-slate-950 dark:text-white">{user.availability || 'Not added yet'}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Shows when this member usually responds or meets.</p>
+            </div>
+            <div className="surface-panel rounded-[1.5rem] p-6">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Contact</p>
+              <p className="mt-3 text-xl font-black text-slate-950 dark:text-white">
+                {user.preferredContact === 'phone' && user.phone ? user.phone : user.preferredContact === 'email' ? user.email : 'CampusMart messages'}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Preferred way to continue marketplace conversations.</p>
             </div>
           </section>
 

@@ -121,6 +121,7 @@ export const authOptions: NextAuthOptions = {
             session.user.college = dbUser.college;
             session.user.domain = dbUser.domain;
             session.user.id = dbUser._id.toString();
+            session.user.image = dbUser.image;
           }
         } catch (err) {
           console.error('Session DB error:', err);
