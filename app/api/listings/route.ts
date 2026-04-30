@@ -5,6 +5,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Listing from '@/models/Listing';
 import { createListingSchema } from '@/lib/validators/listing';
 import { filterShowcaseListings } from '@/lib/showcase-listings';
+import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,9 +17,31 @@ export async function GET(req: NextRequest) {
   const maxPrice = Number(url.searchParams.get('maxPrice') || '0');
   const page = Number(url.searchParams.get('page') || '1');
   const limit = Number(url.searchParams.get('limit') || '12');
+  const ids = url.searchParams.get('ids');
   const escapedSearch = search?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   await connectToDatabase();
+
+  if (ids) {
+    const listingIds = ids
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+    if (listingIds.length === 0) {
+      return NextResponse.json({ listings: [], total: 0, page: 1, limit });
+    }
+
+    const listings = await Listing.find({
+      _id: { $in: listingIds.map((id) => new mongoose.Types.ObjectId(id)) },
+      status: 'approved',
+      isDemo: false
+    })
+      .limit(Math.min(limit, listingIds.length))
+      .lean();
+
+    return NextResponse.json({ listings, total: listings.length, page: 1, limit });
+  }
 
   const baseFilters: any = { status: 'approved', isDemo: false };
   const demoFilters: any = { isDemo: true };

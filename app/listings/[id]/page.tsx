@@ -6,6 +6,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Listing from '@/models/Listing';
 import BiddingWidget from '@/components/listing/bidding-widget';
 import SellerBidsPanel from '@/components/listing/seller-bids-panel';
+import ListingActions from '@/components/listing/listing-actions';
 import Header from '@/components/header';
 import Image from 'next/image';
 import { formatCurrency } from '@/lib/currency';
@@ -32,8 +33,8 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
           <div className="grid gap-10 lg:grid-cols-[1.3fr_0.95fr] lg:items-start">
             <div className="space-y-5">
               {primaryImage ? (
-                <div className="aspect-video overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-lg dark:border-white/10 dark:bg-white/5">
-                  <Image src={primaryImage} alt={listing.title} fill className="object-cover transition-transform duration-500 hover:scale-105" />
+                <div className="relative aspect-video overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-lg dark:border-white/10 dark:bg-white/5">
+                  <Image src={primaryImage} alt={listing.title} fill sizes="(max-width: 768px) 100vw, 60vw" className="object-cover transition-transform duration-500 hover:scale-105" />
                 </div>
               ) : (
                 <div className="flex aspect-video items-center justify-center rounded-lg border border-slate-200 bg-slate-100 font-semibold text-slate-400 dark:border-white/10 dark:bg-white/5">
@@ -43,8 +44,8 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               {galleryImages.length > 0 && (
                 <div className="grid gap-4 sm:grid-cols-3">
                   {galleryImages.map((image: string, index: number) => (
-                    <div key={index} className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
-                      <Image src={image} alt={`${listing.title} ${index + 2}`} fill className="object-cover transition-transform duration-500 hover:scale-110" />
+                    <div key={index} className="relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
+                      <Image src={image} alt={`${listing.title} ${index + 2}`} fill sizes="(max-width: 768px) 33vw, 20vw" className="object-cover transition-transform duration-500 hover:scale-110" />
                     </div>
                   ))}
                 </div>
@@ -83,10 +84,10 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                 ))}
               </div>
 
-              {isOwner ? (
-                <Link href="/messages" className="btn-primary flex w-full py-4">View Messages from Buyers</Link>
-              ) : (
-                <Link href={`/listings/${listing._id}/chat`} className="btn-primary flex w-full py-4">Send Message to Seller</Link>
+              <ListingActions listingId={listing._id.toString()} isOwner={isOwner} />
+
+              {!isOwner && (
+                <Link href={`/listings/${listing._id}/chat`} className="btn-secondary flex w-full py-4">Send Message to Seller</Link>
               )}
             </div>
           </div>
