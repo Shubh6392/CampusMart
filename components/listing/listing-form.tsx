@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { listingCategories } from '@/lib/listing-categories';
 
 const conditions = ['new', 'like new', 'good', 'fair', 'used'];
-const categories = ['books', 'electronics', 'furniture', 'clothing', 'misc'];
 
 const inputCls = 'field-control';
 const labelCls = 'text-sm font-bold text-slate-700 dark:text-slate-200';
@@ -15,7 +15,7 @@ export default function ListingForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState(categories[0]);
+  const [category, setCategory] = useState(listingCategories[0].value);
   const [condition, setCondition] = useState(conditions[0]);
   const [images, setImages] = useState<string[]>([]);
   const [campus, setCampus] = useState('');
@@ -93,7 +93,7 @@ export default function ListingForm() {
         <label className="block">
           <span className={labelCls}>Category</span>
           <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputCls}>
-            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+            {listingCategories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
         </label>
         <label className="block">

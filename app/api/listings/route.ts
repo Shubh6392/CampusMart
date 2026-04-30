@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/authOptions';
 import { connectToDatabase } from '@/lib/mongodb';
 import Listing from '@/models/Listing';
 import { createListingSchema } from '@/lib/validators/listing';
+import { filterShowcaseListings } from '@/lib/showcase-listings';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,7 @@ export async function GET(req: NextRequest) {
   const maxPrice = Number(url.searchParams.get('maxPrice') || '0');
   const page = Number(url.searchParams.get('page') || '1');
   const limit = Number(url.searchParams.get('limit') || '12');
+  const escapedSearch = search?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   await connectToDatabase();
 
@@ -29,9 +31,9 @@ export async function GET(req: NextRequest) {
   }
   if (search) {
     const searchOr = [
-      { title: { $regex: search, $options: 'i' } },
-      { description: { $regex: search, $options: 'i' } },
-      { tags: { $regex: search, $options: 'i' } }
+      { title: { $regex: escapedSearch, $options: 'i' } },
+      { description: { $regex: escapedSearch, $options: 'i' } },
+      { tags: { $regex: escapedSearch, $options: 'i' } }
     ];
     baseFilters.$or = searchOr;
     demoFilters.$or = searchOr;
@@ -45,14 +47,23 @@ export async function GET(req: NextRequest) {
   }
 
   const skip = Math.max((page - 1) * limit, 0);
-  const [total, listings] = await Promise.all([
+  const showcaseMatches = filterShowcaseListings({ category, search, minPrice, maxPrice });
+  const showcasePage = showcaseMatches.slice(skip, skip + limit);
+  const databaseLimit = Math.max(limit - showcasePage.length, 0);
+  const databaseSkip = Math.max(skip - showcaseMatches.length, 0);
+
+  const [databaseTotal, databaseListings] = await Promise.all([
     Listing.countDocuments(filters),
-    Listing.find(filters)
-      .sort({ isDemo: 1, createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean()
+    databaseLimit > 0
+      ? Listing.find(filters)
+          .sort({ isDemo: 1, createdAt: -1 })
+          .skip(databaseSkip)
+          .limit(databaseLimit)
+          .lean()
+      : Promise.resolve([])
   ]);
+  const total = showcaseMatches.length + databaseTotal;
+  const listings = [...showcasePage, ...databaseListings];
 
   return NextResponse.json({ listings, total, page, limit });
 }

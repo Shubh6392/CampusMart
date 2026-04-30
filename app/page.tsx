@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import Header from '@/components/header';
+import { listingCategories } from '@/lib/listing-categories';
 
 const categoryTabs = [
   'Study Essentials',
@@ -13,7 +14,7 @@ const categoryTabs = [
   'Books',
   'Cycles',
   'Sports',
-];
+].map((label) => listingCategories.find((category) => category.label === label)!);
 
 const spotlightCards = [
   {
@@ -46,16 +47,19 @@ const quickDeals = [
   {
     title: 'Stationery combo',
     price: 'From Rs 12',
+    href: '/listings?search=Stationery+combo',
     image: 'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=700&q=80',
   },
   {
     title: 'Desk audio setup',
     price: 'From Rs 39',
+    href: '/listings?search=Desk+audio+setup',
     image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=700&q=80',
   },
   {
     title: 'Cycle commute gear',
     price: 'From Rs 18',
+    href: '/listings?search=Cycle+commute+gear',
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=700&q=80',
   },
 ];
@@ -64,21 +68,25 @@ const curatedShelf = [
   {
     title: 'Classroom basics',
     text: 'Notebooks, pens, folders, and everyday study supplies.',
+    href: '/listings?search=Classroom+basics',
     image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=700&q=80',
   },
   {
     title: 'Lab and project gear',
     text: 'Calculators, kits, and practical tools for academic work.',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab10380d70a?auto=format&fit=crop&w=700&q=80',
+    href: '/listings?search=Lab+and+project+gear',
+    image: 'https://picsum.photos/seed/labgear/700/700',
   },
   {
     title: 'Creator corner',
     text: 'Camera, audio, and desk accessories for building ideas.',
+    href: '/listings?search=Creator+corner',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=700&q=80',
   },
   {
     title: 'Hostel utility',
     text: 'Bottles, locks, organizers, and compact room essentials.',
+    href: '/listings?search=Hostel+utility',
     image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=700&q=80',
   },
 ];
@@ -89,6 +97,7 @@ const featured = [
     price: 'Rs 899',
     category: 'Electronics',
     detail: 'Ideal for coding, design, and project work.',
+    href: '/listings?search=MacBook+Air+M1',
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80',
   },
   {
@@ -96,6 +105,7 @@ const featured = [
     price: 'Rs 140',
     category: 'Furniture',
     detail: 'A cleaner room setup for classes and long sessions.',
+    href: '/listings?search=Study+desk+setup',
     image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=900&q=80',
   },
   {
@@ -103,6 +113,7 @@ const featured = [
     price: 'Rs 65',
     category: 'Books',
     detail: 'Semester-ready reading at student-friendly pricing.',
+    href: '/listings?search=Textbook+bundle',
     image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80',
   },
 ];
@@ -131,6 +142,13 @@ const benefitCards = [
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
   const isSignedIn = Boolean(session?.user);
+  const userName = session?.user?.name?.trim() || 'My Account';
+  const initials = userName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('') || 'A';
 
   return (
     <main className="app-shell">
@@ -158,20 +176,54 @@ export default async function HomePage() {
             </div>
 
             <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center">
-              <div className="flex-1 rounded-[1.4rem] border border-slate-200 bg-slate-50 px-5 py-4 dark:border-white/10 dark:bg-white/[0.03]">
-                <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-                  <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Search</span>
-                  <span className="text-sm sm:text-base">Find laptops, books, room setup items, cycles, and student deals</span>
+              <form action="/listings" method="get" className="flex-1 rounded-[1.4rem] border border-slate-200 bg-slate-50 p-2 dark:border-white/10 dark:bg-white/[0.03]">
+                <label htmlFor="home-marketplace-search" className="sr-only">
+                  Search marketplace items
+                </label>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <div className="flex flex-1 items-center gap-3 px-3 py-2 text-slate-500 dark:text-slate-400">
+                    <span className="hidden text-sm font-black uppercase tracking-[0.2em] text-slate-400 sm:inline">
+                      Search
+                    </span>
+                    <input
+                      id="home-marketplace-search"
+                      name="search"
+                      type="search"
+                      placeholder="Find laptops, books, room setup items, cycles, and student deals"
+                      className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-400 sm:text-base"
+                    />
+                  </div>
+                  <button type="submit" className="btn-primary px-5 py-3">
+                    Search
+                  </button>
                 </div>
-              </div>
+              </form>
 
               <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
                 <Link href="/listings" className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
                   Explore marketplace
                 </Link>
-                <Link href={isSignedIn ? '/profile' : '/auth/signin'} className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
-                  {isSignedIn ? 'My account' : 'Login'}
-                </Link>
+                {isSignedIn ? (
+                  <Link href="/profile" className="account-pill group" aria-label="Open profile" title="My account">
+                    <span className="account-pill-avatar">
+                      {session?.user?.image ? (
+                        <Image
+                          src={session.user.image}
+                          alt={userName}
+                          width={40}
+                          height={40}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        initials
+                      )}
+                    </span>
+                  </Link>
+                ) : (
+                  <Link href="/auth/signin" className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
+                    Login
+                  </Link>
+                )}
                 <Link href={isSignedIn ? '/bookmarks' : '/listings'} className="rounded-xl px-4 py-3 text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10">
                   Saved
                 </Link>
@@ -181,16 +233,17 @@ export default async function HomePage() {
             <div className="mt-5 overflow-x-auto">
               <div className="flex min-w-max gap-3">
                 {categoryTabs.map((tab, index) => (
-                  <span
-                    key={tab}
+                  <Link
+                    key={tab.value}
+                    href={`/listings?category=${encodeURIComponent(tab.value)}`}
                     className={`rounded-full px-4 py-2 text-sm font-bold ${
                       index === 0
                         ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950'
-                        : 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200'
+                        : 'bg-slate-100 text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15'
                     }`}
                   >
-                    {tab}
-                  </span>
+                    {tab.label}
+                  </Link>
                 ))}
               </div>
             </div>
@@ -293,13 +346,13 @@ export default async function HomePage() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               {quickDeals.map((item) => (
-                <article key={item.title} className="rounded-[1.5rem] bg-slate-50 p-3 dark:bg-white/[0.04]">
+                <Link key={item.title} href={item.href} className="group rounded-[1.5rem] bg-slate-50 p-3 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_50px_rgba(15,118,110,0.12)] dark:bg-white/[0.04] dark:hover:bg-white/[0.07]">
                   <div className="relative aspect-[4/4.1] overflow-hidden rounded-[1.15rem]">
-                    <Image src={item.image} alt={item.title} fill className="object-cover" />
+                    <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
                   </div>
                   <p className="mt-3 text-lg font-black text-slate-900 dark:text-white">{item.price}</p>
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{item.title}</p>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
@@ -317,15 +370,15 @@ export default async function HomePage() {
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {curatedShelf.map((item) => (
-                <article key={item.title} className="overflow-hidden rounded-[1.3rem] bg-white p-2 shadow-sm dark:bg-slate-950/40">
+                <Link key={item.title} href={item.href} className="group overflow-hidden rounded-[1.3rem] bg-white p-2 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(16,185,129,0.14)] dark:bg-slate-950/40">
                   <div className="relative aspect-[4/4.1] overflow-hidden rounded-[1rem]">
-                    <Image src={item.image} alt={item.title} fill className="object-cover" />
+                    <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
                   </div>
                   <div className="p-2">
                     <p className="text-sm font-black text-slate-900 dark:text-white">{item.title}</p>
                     <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-300">{item.text}</p>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
@@ -344,9 +397,9 @@ export default async function HomePage() {
 
           <div className="grid gap-5 md:grid-cols-3">
             {featured.map((item) => (
-              <article key={item.title} className="elevated-card elevated-card-hover overflow-hidden">
+              <Link key={item.title} href={item.href} className="elevated-card elevated-card-hover group overflow-hidden">
                 <div className="relative aspect-[5/3] overflow-hidden bg-slate-100 dark:bg-neutral-800">
-                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" />
+                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
                 </div>
                 <div className="p-5">
                   <span className="status-pill">{item.category}</span>
@@ -354,7 +407,7 @@ export default async function HomePage() {
                   <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{item.detail}</p>
                   <p className="mt-4 text-2xl font-black text-teal-700 dark:text-teal-300">{item.price}</p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>

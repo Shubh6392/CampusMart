@@ -11,8 +11,6 @@ export default function Header() {
   const isAdmin = (session?.user as any)?.role === 'admin';
   const navLink = 'rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white';
   const userName = session?.user?.name?.trim() || 'My Account';
-  const firstName = userName.split(' ')[0] || 'Account';
-  const userRole = (session?.user as any)?.role || 'member';
   const initials = userName
     .split(' ')
     .filter(Boolean)
@@ -40,7 +38,7 @@ export default function Header() {
               <Link href="/messages" className={navLink}>Messages</Link>
               <Link href="/bookmarks" className={`${navLink} hidden sm:inline-flex`}>Saved</Link>
               <Link href="/notifications" className={`${navLink} hidden md:inline-flex`}>Alerts</Link>
-              <Link href="/profile" className="account-pill group">
+              <Link href="/profile" className="account-pill group" aria-label="Open profile" title="My account">
                 <span className="account-pill-avatar">
                   {session.user.image ? (
                     <Image
@@ -53,17 +51,6 @@ export default function Header() {
                   ) : (
                     initials
                   )}
-                </span>
-                <span className="hidden min-w-0 text-left sm:flex sm:flex-col">
-                  <span className="truncate text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 transition-colors group-hover:text-teal-600 dark:text-slate-500 dark:group-hover:text-teal-300">
-                    My account
-                  </span>
-                  <span className="truncate text-sm font-black text-slate-900 transition-colors group-hover:text-teal-800 dark:text-white dark:group-hover:text-teal-200">
-                    {firstName}
-                  </span>
-                </span>
-                <span className="hidden rounded-full bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 transition-colors group-hover:bg-teal-50 group-hover:text-teal-700 dark:bg-white/10 dark:text-slate-300 dark:group-hover:bg-teal-400/10 dark:group-hover:text-teal-200 lg:inline-flex">
-                  {userRole}
                 </span>
               </Link>
               {isAdmin && (
