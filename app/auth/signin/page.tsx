@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import ThemeToggle from '@/components/theme-toggle';
 
 type Tab = 'login' | 'register' | 'admin';
@@ -78,9 +79,11 @@ export default function SignInPage() {
       <div className="absolute right-4 top-4"><ThemeToggle /></div>
       <div className="grid w-full max-w-6xl gap-6 lg:grid-cols-[1fr_1fr] lg:items-center xl:max-w-7xl">
         <div className="hidden overflow-hidden rounded-lg lg:block">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1000&q=80"
             alt="Students working together on campus"
+            width={1000}
+            height={620}
             className="h-[620px] w-full object-cover"
           />
         </div>

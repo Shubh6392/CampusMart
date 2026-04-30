@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import ThemeToggle from '@/components/theme-toggle';
+import Image from 'next/image';
 import LogoutButton from '@/components/logout-button';
 
 export default function Header() {
@@ -42,9 +43,11 @@ export default function Header() {
               <Link href="/profile" className="account-pill group">
                 <span className="account-pill-avatar">
                   {session.user.image ? (
-                    <img
+                    <Image
                       src={session.user.image}
                       alt={userName}
+                      width={40}
+                      height={40}
                       className="h-full w-full object-cover"
                     />
                   ) : (

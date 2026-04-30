@@ -46,8 +46,8 @@ export default async function DashboardPage() {
 
     const listingIds = listings.map((listing: any) => listing._id);
     const [bidCount, acceptedBidCount] = await Promise.all([
-      listingIds.length ? Bid.countDocuments({ listing: { $in: listingIds } }) : 0,
-      listingIds.length ? Bid.countDocuments({ listing: { $in: listingIds }, status: 'accepted' }) : 0,
+      listingIds.length ? Bid.countDocuments({ listing: { $in: listingIds } }) : Promise.resolve(0),
+      listingIds.length ? Bid.countDocuments({ listing: { $in: listingIds }, status: 'accepted' }) : Promise.resolve(0),
     ]);
 
     activeListings = listings.filter((listing: any) => listing.status === 'approved').length;

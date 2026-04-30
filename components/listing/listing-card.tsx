@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatCurrency } from '@/lib/currency';
 
 interface ListingCardProps {
@@ -17,7 +18,7 @@ export default function ListingCard({ id, title, price, category, condition, ima
     <div className={`group elevated-card overflow-hidden ${isDemo ? 'cursor-default' : 'elevated-card-hover cursor-pointer'}`}>
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-neutral-800">
         {image ? (
-          <img src={image} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+          <Image src={image} alt={title} fill className="object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
         ) : (
           <div className="flex h-full items-center justify-center text-sm font-semibold text-slate-400 dark:text-slate-500">
             Image pending

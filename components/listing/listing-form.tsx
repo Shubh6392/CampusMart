@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 const conditions = ['new', 'like new', 'good', 'fair', 'used'];
@@ -134,8 +135,8 @@ export default function ListingForm() {
         {images.length > 0 && (
           <div className="grid gap-3 sm:grid-cols-3">
             {images.map((img, i) => (
-              <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
-                <img src={img} alt={`Upload ${i + 1}`} className="h-full w-full object-cover" />
+                <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
+                <Image src={img} alt={`Upload ${i + 1}`} fill className="object-cover" />
                 <button type="button" onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
                   className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 transition group-hover:bg-opacity-50">
                   <span className="text-sm font-semibold text-white opacity-0 transition group-hover:opacity-100">Remove</span>

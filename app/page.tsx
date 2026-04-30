@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import Header from '@/components/header';
@@ -228,10 +229,11 @@ export default async function HomePage() {
 
                 <div className="surface-panel overflow-hidden p-3">
                   <div className="relative aspect-[4/4.7] overflow-hidden rounded-[1.6rem]">
-                    <img
+                    <Image
                       src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=80"
                       alt="Students on campus reviewing items together"
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                     <div className="absolute inset-x-4 top-4 rounded-[1.2rem] border border-white/25 bg-white/90 p-4 text-slate-900 backdrop-blur dark:bg-slate-950/75 dark:text-white">
                       <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-700 dark:text-teal-200">Live campus activity</p>
@@ -264,8 +266,8 @@ export default async function HomePage() {
                         <p className={`mt-2 text-sm font-bold ${darkCard ? 'text-white' : 'text-slate-700'}`}>{card.subtitle}</p>
                         <p className={`mt-2 text-sm leading-6 ${darkCard ? 'text-slate-200' : 'text-slate-600'}`}>{card.detail}</p>
                       </div>
-                      <div className="overflow-hidden rounded-[1.2rem] bg-white/40">
-                        <img src={card.image} alt={card.title} className="h-full w-full object-cover" />
+                      <div className="relative overflow-hidden rounded-[1.2rem] bg-white/40">
+                        <Image src={card.image} alt={card.title} fill className="object-cover" />
                       </div>
                     </div>
                   </article>
@@ -292,8 +294,8 @@ export default async function HomePage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {quickDeals.map((item) => (
                 <article key={item.title} className="rounded-[1.5rem] bg-slate-50 p-3 dark:bg-white/[0.04]">
-                  <div className="aspect-[4/4.1] overflow-hidden rounded-[1.15rem]">
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                  <div className="relative aspect-[4/4.1] overflow-hidden rounded-[1.15rem]">
+                    <Image src={item.image} alt={item.title} fill className="object-cover" />
                   </div>
                   <p className="mt-3 text-lg font-black text-slate-900 dark:text-white">{item.price}</p>
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{item.title}</p>
@@ -316,8 +318,8 @@ export default async function HomePage() {
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {curatedShelf.map((item) => (
                 <article key={item.title} className="overflow-hidden rounded-[1.3rem] bg-white p-2 shadow-sm dark:bg-slate-950/40">
-                  <div className="aspect-[4/4.1] overflow-hidden rounded-[1rem]">
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                  <div className="relative aspect-[4/4.1] overflow-hidden rounded-[1rem]">
+                    <Image src={item.image} alt={item.title} fill className="object-cover" />
                   </div>
                   <div className="p-2">
                     <p className="text-sm font-black text-slate-900 dark:text-white">{item.title}</p>
@@ -343,8 +345,8 @@ export default async function HomePage() {
           <div className="grid gap-5 md:grid-cols-3">
             {featured.map((item) => (
               <article key={item.title} className="elevated-card elevated-card-hover overflow-hidden">
-                <div className="aspect-[5/3] overflow-hidden bg-slate-100 dark:bg-neutral-800">
-                  <img src={item.image} alt={item.title} className="h-full w-full object-cover transition duration-500 hover:scale-105" />
+                <div className="relative aspect-[5/3] overflow-hidden bg-slate-100 dark:bg-neutral-800">
+                  <Image src={item.image} alt={item.title} fill className="object-cover transition duration-500 hover:scale-105" />
                 </div>
                 <div className="p-5">
                   <span className="status-pill">{item.category}</span>

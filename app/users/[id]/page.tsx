@@ -9,6 +9,7 @@ import Bookmark from '@/models/Bookmark';
 import Listing from '@/models/Listing';
 import Message from '@/models/Message';
 import User from '@/models/User';
+import Image from 'next/image';
 import { formatCurrency } from '@/lib/currency';
 
 function formatMemberSince(value?: Date | string) {
@@ -133,9 +134,11 @@ export default async function UserProfilePage({ params }: { params: { id: string
                 <p className="eyebrow">{isOwner ? 'Your profile' : 'Member profile'}</p>
                 <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
                   {user.image ? (
-                    <img
+                    <Image
                       src={user.image}
                       alt={user.name}
+                      width={96}
+                      height={96}
                       className="h-24 w-24 rounded-3xl border border-white/70 object-cover shadow-lg dark:border-white/10"
                     />
                   ) : (
@@ -261,10 +264,11 @@ export default async function UserProfilePage({ params }: { params: { id: string
                 {listings.map((listing: any) => (
                   <Link key={listing._id.toString()} href={`/listings/${listing._id.toString()}`} className="insight-card group">
                     {listing.images?.[0] ? (
-                      <div className="mb-4 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10">
-                        <img
+                      <div className="relative mb-4 h-44 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10">
+                        <Image
                           src={listing.images[0]}
                           alt={listing.title}
+                          fill
                           className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>

@@ -7,6 +7,7 @@ import Listing from '@/models/Listing';
 import BiddingWidget from '@/components/listing/bidding-widget';
 import SellerBidsPanel from '@/components/listing/seller-bids-panel';
 import Header from '@/components/header';
+import Image from 'next/image';
 import { formatCurrency } from '@/lib/currency';
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
@@ -32,7 +33,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
             <div className="space-y-5">
               {primaryImage ? (
                 <div className="aspect-video overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-lg dark:border-white/10 dark:bg-white/5">
-                  <img src={primaryImage} alt={listing.title} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                  <Image src={primaryImage} alt={listing.title} fill className="object-cover transition-transform duration-500 hover:scale-105" />
                 </div>
               ) : (
                 <div className="flex aspect-video items-center justify-center rounded-lg border border-slate-200 bg-slate-100 font-semibold text-slate-400 dark:border-white/10 dark:bg-white/5">
@@ -42,8 +43,8 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
               {galleryImages.length > 0 && (
                 <div className="grid gap-4 sm:grid-cols-3">
                   {galleryImages.map((image: string, index: number) => (
-                    <div key={index} className="overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
-                      <img src={image} alt={`${listing.title} ${index + 2}`} className="h-32 w-full object-cover transition-transform duration-500 hover:scale-110" />
+                    <div key={index} className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/5">
+                      <Image src={image} alt={`${listing.title} ${index + 2}`} fill className="object-cover transition-transform duration-500 hover:scale-110" />
                     </div>
                   ))}
                 </div>
