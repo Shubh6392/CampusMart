@@ -5,6 +5,8 @@ interface ListingFiltersProps {
   onSearchChange: (value: string) => void;
   category: string;
   onCategoryChange: (value: string) => void;
+  condition: string;
+  onConditionChange: (value: string) => void;
   minPrice: string;
   onMinPriceChange: (value: string) => void;
   maxPrice: string;
@@ -18,6 +20,8 @@ export default function ListingFilters({
   onSearchChange,
   category,
   onCategoryChange,
+  condition,
+  onConditionChange,
   minPrice,
   onMinPriceChange,
   maxPrice,
@@ -31,7 +35,7 @@ export default function ListingFilters({
         event.preventDefault();
         onSubmit?.();
       }}
-      className="grid gap-4 xl:grid-cols-[1.2fr_240px_150px_150px_auto_auto] xl:items-end"
+      className="grid gap-4 xl:grid-cols-[1.2fr_220px_180px_140px_140px_auto_auto] xl:items-end"
     >
       <label className="block">
         <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Search marketplace</span>
@@ -50,6 +54,17 @@ export default function ListingFilters({
           {listingCategories.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
+        </select>
+      </label>
+      <label className="block">
+        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Condition</span>
+        <select value={condition} onChange={(e) => onConditionChange(e.target.value)} className="field-control">
+          <option value="">Any condition</option>
+          <option value="new">New</option>
+          <option value="like new">Like new</option>
+          <option value="good">Good</option>
+          <option value="fair">Fair</option>
+          <option value="used">Used</option>
         </select>
       </label>
       <label className="block">

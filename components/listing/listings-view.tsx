@@ -21,6 +21,7 @@ interface ListingItem {
 interface ListingsViewProps {
   initialSearch?: string;
   initialCategory?: string;
+  initialCondition?: string;
   initialMinPrice?: string;
   initialMaxPrice?: string;
 }
@@ -28,12 +29,14 @@ interface ListingsViewProps {
 export default function ListingsView({
   initialSearch = '',
   initialCategory = '',
+  initialCondition = '',
   initialMinPrice = '',
   initialMaxPrice = ''
 }: ListingsViewProps) {
   const router = useRouter();
   const [search, setSearch] = useState(initialSearch);
   const [category, setCategory] = useState(initialCategory);
+  const [condition, setCondition] = useState(initialCondition);
   const [minPrice, setMinPrice] = useState(initialMinPrice);
   const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
   const [listings, setListings] = useState<ListingItem[]>([]);
@@ -47,18 +50,20 @@ export default function ListingsView({
     const params = new URLSearchParams();
     if (search.trim()) params.set('search', search.trim());
     if (category) params.set('category', category);
+    if (condition) params.set('condition', condition);
     if (minPrice) params.set('minPrice', minPrice);
     if (maxPrice) params.set('maxPrice', maxPrice);
     params.set('page', page.toString());
     params.set('limit', '12');
     return params.toString();
-  }, [search, category, minPrice, maxPrice, page]);
+  }, [search, category, condition, minPrice, maxPrice, page]);
 
-  const hasActiveFilters = Boolean(search.trim() || category || minPrice || maxPrice);
+  const hasActiveFilters = Boolean(search.trim() || category || condition || minPrice || maxPrice);
   const totalPages = Math.max(Math.ceil(total / 12), 1);
   const firstResult = total === 0 ? 0 : (page - 1) * 12 + 1;
   const lastResult = Math.min(page * 12, total);
   const selectedCategory = category.replace(/-/g, ' ');
+  const selectedCondition = condition.replace(/-/g, ' ');
 
   useEffect(() => {
     let ignore = false;
@@ -103,6 +108,11 @@ export default function ListingsView({
     setPage(1);
   };
 
+  const handleConditionChange = (value: string) => {
+    setCondition(value);
+    setPage(1);
+  };
+
   const handleMinPriceChange = (value: string) => {
     setMinPrice(value);
     setPage(1);
@@ -117,6 +127,7 @@ export default function ListingsView({
     const params = new URLSearchParams();
     if (search.trim()) params.set('search', search.trim());
     if (category) params.set('category', category);
+    if (condition) params.set('condition', condition);
     if (minPrice) params.set('minPrice', minPrice);
     if (maxPrice) params.set('maxPrice', maxPrice);
     router.replace(params.toString() ? `/listings?${params.toString()}` : '/listings');
@@ -125,6 +136,7 @@ export default function ListingsView({
   const handleClearFilters = () => {
     setSearch('');
     setCategory('');
+    setCondition('');
     setMinPrice('');
     setMaxPrice('');
     setPage(1);
@@ -134,6 +146,7 @@ export default function ListingsView({
   const activeFilterText = [
     search.trim() ? `"${search.trim()}"` : '',
     category ? selectedCategory : '',
+    condition ? selectedCondition : '',
     minPrice ? `from ₹${minPrice}` : '',
     maxPrice ? `under ₹${maxPrice}` : ''
   ]
@@ -181,6 +194,8 @@ export default function ListingsView({
               onSearchChange={handleSearchChange}
               category={category}
               onCategoryChange={handleCategoryChange}
+              condition={condition}
+              onConditionChange={handleConditionChange}
               minPrice={minPrice}
               onMinPriceChange={handleMinPriceChange}
               maxPrice={maxPrice}
@@ -193,6 +208,7 @@ export default function ListingsView({
                 <span className="font-bold text-slate-600 dark:text-slate-300">Active filters:</span>
                 {search.trim() && <span className="status-pill">Search: {search.trim()}</span>}
                 {category && <span className="status-pill capitalize">Category: {selectedCategory}</span>}
+                {condition && <span className="status-pill capitalize">Condition: {selectedCondition}</span>}
                 {minPrice && <span className="status-pill">Min: ₹{minPrice}</span>}
                 {maxPrice && <span className="status-pill">Max: ₹{maxPrice}</span>}
               </div>

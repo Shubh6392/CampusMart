@@ -143,11 +143,13 @@ export const showcaseListings = [
 
 export function filterShowcaseListings({
   category,
+  condition,
   search,
   minPrice,
   maxPrice,
 }: {
   category?: string | null;
+  condition?: string | null;
   search?: string | null;
   minPrice?: number;
   maxPrice?: number;
@@ -156,6 +158,7 @@ export function filterShowcaseListings({
 
   return showcaseListings.filter((listing) => {
     if (category && listing.category !== category) return false;
+    if (condition && listing.condition !== condition) return false;
     if (minPrice && listing.price < minPrice) return false;
     if (maxPrice && listing.price > maxPrice) return false;
     if (!normalizedSearch) return true;

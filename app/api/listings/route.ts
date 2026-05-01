@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const category = url.searchParams.get('category');
+  const condition = url.searchParams.get('condition');
   const search = url.searchParams.get('search');
   const minPrice = Number(url.searchParams.get('minPrice') || '0');
   const maxPrice = Number(url.searchParams.get('maxPrice') || '0');
@@ -52,6 +53,10 @@ export async function GET(req: NextRequest) {
     baseFilters.category = category;
     demoFilters.category = category;
   }
+  if (condition) {
+    baseFilters.condition = condition;
+    demoFilters.condition = condition;
+  }
   if (search) {
     const searchOr = [
       { title: { $regex: escapedSearch, $options: 'i' } },
@@ -70,7 +75,7 @@ export async function GET(req: NextRequest) {
   }
 
   const skip = Math.max((page - 1) * limit, 0);
-  const showcaseMatches = filterShowcaseListings({ category, search, minPrice, maxPrice });
+  const showcaseMatches = filterShowcaseListings({ category, condition, search, minPrice, maxPrice });
   const showcasePage = showcaseMatches.slice(skip, skip + limit);
   const databaseLimit = Math.max(limit - showcasePage.length, 0);
   const databaseSkip = Math.max(skip - showcaseMatches.length, 0);
