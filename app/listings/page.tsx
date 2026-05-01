@@ -7,6 +7,7 @@ interface ListingsPageProps {
     condition?: string;
     minPrice?: string;
     maxPrice?: string;
+    sort?: string;
   };
 }
 
@@ -18,6 +19,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
       initialCondition={searchParams?.condition || ''}
       initialMinPrice={searchParams?.minPrice || ''}
       initialMaxPrice={searchParams?.maxPrice || ''}
+      initialSort={searchParams?.sort || 'newest'}
     />
   );
 }

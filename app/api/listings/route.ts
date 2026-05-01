@@ -6,6 +6,7 @@ import Listing from '@/models/Listing';
 import { createListingSchema } from '@/lib/validators/listing';
 import { filterShowcaseListings } from '@/lib/showcase-listings';
 import mongoose from 'mongoose';
+import type { SortOrder } from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +19,14 @@ export async function GET(req: NextRequest) {
   const maxPrice = Number(url.searchParams.get('maxPrice') || '0');
   const page = Number(url.searchParams.get('page') || '1');
   const limit = Number(url.searchParams.get('limit') || '12');
+  const sort = url.searchParams.get('sort') || 'newest';
   const ids = url.searchParams.get('ids');
   const escapedSearch = search?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const sortQuery: Record<string, SortOrder> = sort === 'price-asc'
+    ? { isDemo: 1, price: 1, createdAt: -1 }
+    : sort === 'price-desc'
+      ? { isDemo: 1, price: -1, createdAt: -1 }
+      : { isDemo: 1, createdAt: -1 };
 
   await connectToDatabase();
 
@@ -75,7 +82,11 @@ export async function GET(req: NextRequest) {
   }
 
   const skip = Math.max((page - 1) * limit, 0);
-  const showcaseMatches = filterShowcaseListings({ category, condition, search, minPrice, maxPrice });
+  const showcaseMatches = filterShowcaseListings({ category, condition, search, minPrice, maxPrice }).sort((a, b) => {
+    if (sort === 'price-asc') return a.price - b.price;
+    if (sort === 'price-desc') return b.price - a.price;
+    return 0;
+  });
   const showcasePage = showcaseMatches.slice(skip, skip + limit);
   const databaseLimit = Math.max(limit - showcasePage.length, 0);
   const databaseSkip = Math.max(skip - showcaseMatches.length, 0);
@@ -84,7 +95,7 @@ export async function GET(req: NextRequest) {
     Listing.countDocuments(filters),
     databaseLimit > 0
       ? Listing.find(filters)
-          .sort({ isDemo: 1, createdAt: -1 })
+          .sort(sortQuery)
           .skip(databaseSkip)
           .limit(databaseLimit)
           .lean()

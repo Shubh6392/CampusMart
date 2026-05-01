@@ -6,6 +6,7 @@ import ThemeToggle from '@/components/theme-toggle';
 import Image from 'next/image';
 import LogoutButton from '@/components/logout-button';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const CART_STORAGE_KEY = 'campusmart_cart_items';
 
@@ -22,8 +23,10 @@ function readCartCount() {
 
 export default function Header() {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [cartCount, setCartCount] = useState(0);
   const isAdmin = (session?.user as any)?.role === 'admin';
+  const isListingsPage = pathname === '/listings';
   const navLink = 'rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-teal-50 hover:text-teal-800 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white';
   const userName = session?.user?.name?.trim() || 'My Account';
   const initials = userName
@@ -46,7 +49,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-950/75">
-      <div className="app-container grid gap-3 py-3 lg:grid-cols-[auto_minmax(360px,1fr)_auto] lg:items-center">
+      <div className={`app-container grid gap-3 py-3 lg:items-center ${isListingsPage ? 'lg:grid-cols-[auto_1fr]' : 'lg:grid-cols-[auto_minmax(360px,1fr)_auto]'}`}>
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-700 shadow-lg shadow-teal-700/20 dark:bg-teal-400">
             <span className="text-lg font-black text-white dark:text-slate-950">C</span>
@@ -57,23 +60,25 @@ export default function Header() {
           </div>
         </Link>
 
-        <form action="/listings" method="get" className="order-3 flex min-h-[48px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm transition focus-within:border-teal-400 focus-within:ring-4 focus-within:ring-teal-500/10 dark:border-white/10 dark:bg-white/[0.06] lg:order-none">
-          <label htmlFor="site-search" className="sr-only">Search CampusMart</label>
-          <svg className="h-5 w-5 shrink-0 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <input
-            id="site-search"
-            name="search"
-            type="search"
-            placeholder="Search products, categories, or pickup points"
-            className="w-full bg-transparent text-sm font-semibold text-slate-950 outline-none placeholder:text-slate-400 dark:text-white dark:placeholder:text-slate-500 sm:text-base"
-          />
-          <button type="submit" className="hidden rounded-xl bg-teal-500 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 dark:text-slate-950 sm:inline-flex">
-            Search
-          </button>
-        </form>
+        {!isListingsPage && (
+          <form action="/listings" method="get" className="order-3 flex min-h-[48px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm transition focus-within:border-teal-400 focus-within:ring-4 focus-within:ring-teal-500/10 dark:border-white/10 dark:bg-white/[0.06] lg:order-none">
+            <label htmlFor="site-search" className="sr-only">Search CampusMart</label>
+            <svg className="h-5 w-5 shrink-0 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              id="site-search"
+              name="search"
+              type="search"
+              placeholder="Search products, categories, or pickup points"
+              className="w-full bg-transparent text-sm font-semibold text-slate-950 outline-none placeholder:text-slate-400 dark:text-white dark:placeholder:text-slate-500 sm:text-base"
+            />
+            <button type="submit" className="hidden rounded-xl bg-teal-500 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 dark:text-slate-950 sm:inline-flex">
+              Search
+            </button>
+          </form>
+        )}
 
         <nav className="flex items-center justify-end gap-1 sm:gap-2">
           {session?.user ? (

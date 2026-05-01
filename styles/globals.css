@@ -15,6 +15,17 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -89,12 +100,16 @@ select option {
     @apply text-slate-600 dark:text-gray-300;
   }
 
+  .price-live {
+    text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+  }
+
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-[0_12px_30px_rgba(20,184,166,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 focus:outline-none focus:ring-4 focus:ring-teal-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-500 dark:text-slate-950 dark:hover:bg-teal-400;
+    @apply inline-flex items-center justify-center rounded-xl bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-[0_12px_30px_rgba(20,184,166,0.22)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 hover:shadow-[0_18px_44px_rgba(20,184,166,0.36)] focus:outline-none focus:ring-4 focus:ring-teal-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-500 dark:text-slate-950 dark:hover:bg-teal-400;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-teal-400/40 bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-[0_12px_30px_rgba(20,184,166,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 focus:outline-none focus:ring-4 focus:ring-teal-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-500 dark:text-slate-950 dark:hover:bg-teal-400;
+    @apply inline-flex items-center justify-center rounded-xl border border-teal-400/40 bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-[0_12px_30px_rgba(20,184,166,0.18)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-400 hover:shadow-[0_18px_44px_rgba(20,184,166,0.30)] focus:outline-none focus:ring-4 focus:ring-teal-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-500 dark:text-slate-950 dark:hover:bg-teal-400;
   }
 
   .account-pill {
@@ -106,7 +121,7 @@ select option {
   }
 
   .field-control {
-    @apply mt-2 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 placeholder-slate-400 shadow-sm outline-none transition-all focus:border-teal-600 focus:ring-4 focus:ring-teal-500/10 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder-slate-500 dark:focus:border-teal-300;
+    @apply mt-2 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 placeholder-slate-400 shadow-sm outline-none transition-all focus:border-teal-600 focus:shadow-[0_0_0_4px_rgba(20,184,166,0.12),0_14px_30px_rgba(15,118,110,0.10)] focus:ring-4 focus:ring-teal-500/10 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder-slate-500 dark:focus:border-teal-300 dark:focus:shadow-[0_0_0_4px_rgba(45,212,191,0.14)];
   }
 
   .status-pill {

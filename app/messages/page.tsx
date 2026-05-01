@@ -8,7 +8,7 @@ import ChatWidget from '@/components/chat/chat-widget';
 import Header from '@/components/header';
 
 interface Conversation {
-  listing: { _id: string; title: string };
+  listing: { _id: string; title: string; price?: number; images?: string[] };
   otherUser: { _id: string; name: string; email: string };
   lastMessage: string;
   lastMessageTime: string;
@@ -111,34 +111,33 @@ function MessagesContent() {
   return (
     <div className="app-shell">
       <Header />
-      <main className="py-8 sm:py-12">
-        <div className="app-container space-y-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <main className="py-6 sm:py-8">
+        <div className="app-container space-y-5">
+          <div className="flex flex-col gap-3">
             <div>
               <p className="eyebrow">Inbox</p>
-              <h1 className="section-title mt-3">Messages</h1>
-              <p className="muted-copy mt-4 max-w-2xl text-base sm:text-lg">Keep every CampusMart negotiation, pickup detail, and listing question in one focused workspace.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:w-auto sm:grid-cols-3">
-              <div className="rounded-lg border border-slate-200 bg-white/85 px-4 py-3 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Threads</p>
-                <p className="mt-1 text-2xl font-black text-slate-950 dark:text-white">{conversations.length}</p>
-              </div>
-              <div className="rounded-lg border border-slate-200 bg-white/85 px-4 py-3 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Unread</p>
-                <p className="mt-1 text-2xl font-black text-teal-700 dark:text-teal-300">{unreadTotal}</p>
-              </div>
-              <div className="col-span-2 rounded-lg border border-slate-200 bg-white/85 px-4 py-3 shadow-sm dark:border-white/10 dark:bg-white/[0.06] sm:col-span-1">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Status</p>
-                <p className="mt-2 inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700 dark:bg-emerald-300/10 dark:text-emerald-200">Active</p>
-              </div>
+              <h1 className="section-title mt-2">Messages</h1>
             </div>
           </div>
 
-          <div className="grid min-h-[720px] grid-cols-1 gap-5 lg:grid-cols-[390px_minmax(0,1fr)] lg:items-stretch">
+          <div className="grid min-h-[720px] grid-cols-1 gap-5 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-stretch xl:grid-cols-[320px_minmax(0,1fr)]">
             <aside className="surface-panel flex overflow-hidden lg:min-h-[720px]">
-              <div className="flex min-w-0 flex-1 flex-col">
+              <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
                 <div className="border-b border-slate-200/80 bg-white/80 p-4 dark:border-white/10 dark:bg-white/[0.03]">
+                  <div className="mb-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-lg bg-slate-50 px-3 py-2 dark:bg-white/[0.04]">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Threads</p>
+                      <p className="mt-1 text-lg font-black text-slate-950 dark:text-white">{conversations.length}</p>
+                    </div>
+                    <div className="rounded-lg bg-teal-50 px-3 py-2 dark:bg-teal-300/10">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Unread</p>
+                      <p className="mt-1 text-lg font-black text-teal-700 dark:text-teal-200">{unreadTotal}</p>
+                    </div>
+                    <div className="rounded-lg bg-emerald-50 px-3 py-2 dark:bg-emerald-300/10">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">Status</p>
+                      <p className="mt-1 text-xs font-black text-emerald-700 dark:text-emerald-200">Active</p>
+                    </div>
+                  </div>
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-lg font-black text-slate-950 dark:text-white">Conversations</h2>
@@ -170,17 +169,19 @@ function MessagesContent() {
                     No conversations match your search.
                   </div>
               ) : (
-                  <ul className="flex-1 overflow-y-auto">
+                  <ul className="flex-1 overflow-x-hidden overflow-y-auto">
                   {filteredConversations.map((conv) => (
                     <li key={conv.conversationId}>
                       <button
                         onClick={() => setSelected(conv)}
-                        className={`w-full border-b border-slate-100 px-4 py-4 text-left transition-colors hover:bg-teal-50/70 dark:border-white/10 dark:hover:bg-white/10 ${
-                          selected?.conversationId === conv.conversationId ? 'bg-teal-50 dark:bg-teal-300/10' : 'bg-white/40 dark:bg-transparent'
+                        className={`w-full border-b border-l-[3px] border-b-slate-100 px-4 py-4 text-left transition-all duration-200 hover:bg-teal-50/80 hover:shadow-[inset_10px_0_22px_rgba(20,184,166,0.10)] dark:border-b-white/10 dark:hover:bg-white/10 ${
+                          selected?.conversationId === conv.conversationId ? 'border-l-teal-500 bg-[rgba(20,184,166,0.10)] shadow-[inset_10px_0_22px_rgba(20,184,166,0.16),0_10px_26px_rgba(15,118,110,0.10)] dark:border-l-teal-300 dark:bg-teal-300/15 dark:shadow-[inset_10px_0_22px_rgba(45,212,191,0.10)]' : 'border-l-transparent bg-white/40 dark:bg-transparent'
                         }`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-950 text-xs font-black text-white shadow-sm dark:bg-teal-300 dark:text-slate-950">
+                          <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-xs font-black shadow-sm ${
+                            selected?.conversationId === conv.conversationId ? 'bg-teal-700 text-white ring-4 ring-teal-500/15 dark:bg-teal-300 dark:text-slate-950' : 'bg-slate-950 text-white dark:bg-teal-300 dark:text-slate-950'
+                          }`}>
                             {getInitials(conv.otherUser?.name)}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -188,9 +189,9 @@ function MessagesContent() {
                               <span className="truncate text-sm font-black text-slate-950 dark:text-white">{conv.otherUser?.name || 'Unknown'}</span>
                               <span className="shrink-0 text-[11px] font-bold text-slate-400">{formatInboxTime(conv.lastMessageTime)}</span>
                             </div>
-                            <p className="mt-1 truncate text-xs font-bold text-slate-500 dark:text-slate-400">{conv.listing?.title || 'Listing'}</p>
+                            <p className="mt-1 truncate text-xs font-semibold text-slate-500 dark:text-slate-400">{conv.listing?.title || 'Listing'}</p>
                             <div className="mt-2 flex items-center gap-2">
-                              <p className="min-w-0 flex-1 truncate text-xs text-slate-400 dark:text-slate-500">{conv.lastMessage || 'No preview available'}</p>
+                              <p className="min-w-0 flex-1 truncate text-xs font-medium text-slate-400 dark:text-slate-500">{conv.lastMessage || 'No preview available'}</p>
                               {conv.unreadCount > 0 && <span className="shrink-0 rounded-full bg-teal-700 px-2 py-0.5 text-[11px] font-black text-white dark:bg-teal-300 dark:text-slate-950">{conv.unreadCount}</span>}
                             </div>
                           </div>
@@ -205,29 +206,26 @@ function MessagesContent() {
 
             <section className="min-w-0">
               {selected ? (
-                <div className="space-y-4">
-                  <div className="surface-panel flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-950 text-sm font-black text-white shadow-sm dark:bg-teal-300 dark:text-slate-950">
-                        {getInitials(selected.otherUser?.name)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Conversation</p>
-                        <h2 className="mt-1 truncate text-2xl font-black text-slate-950 dark:text-white">{selected.otherUser.name}</h2>
-                        <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">{selected.otherUser.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <Link href={`/listings/${selected.listing._id}`} className="btn-secondary px-4 py-2.5">
-                        View listing
-                      </Link>
-                      <Link href={`/users/${selected.otherUser._id}`} className="btn-primary px-4 py-2.5">
-                        View profile
-                      </Link>
+                <div className="flex min-h-[720px] flex-col overflow-hidden bg-white/45 dark:bg-white/[0.025]">
+                  <div className="flex items-center border-b border-slate-200/80 bg-white/85 px-4 py-3 backdrop-blur dark:border-white/10 dark:bg-slate-950/35">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <h2 className="truncate text-base font-black text-slate-950 dark:text-white">{selected.otherUser.name}</h2>
+                      <span className="text-slate-300 dark:text-slate-600">•</span>
+                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-300/10 dark:text-emerald-200">Active</span>
                     </div>
                   </div>
 
-                  <ChatWidget listingId={selected.listing._id} sellerId={selected.otherUser._id} sellerName={selected.otherUser.name} listingTitle={selected.listing.title} />
+                  <ChatWidget
+                    listingId={selected.listing._id}
+                    sellerId={selected.otherUser._id}
+                    sellerName={selected.otherUser.name}
+                    listingTitle={selected.listing.title}
+                    listingPrice={selected.listing.price}
+                    listingImage={selected.listing.images?.[0]}
+                    frameless
+                    hideHeader
+                    stickyListingBar
+                  />
                 </div>
               ) : (
                 <div className="surface-panel flex min-h-[640px] items-center justify-center p-12 text-center">

@@ -1,8 +1,6 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 
 const CART_STORAGE_KEY = 'campusmart_cart_items';
 
@@ -23,53 +21,11 @@ function writeCartItems(items: string[]) {
 }
 
 export default function ListingActions({ listingId, isOwner }: { listingId: string; isOwner: boolean }) {
-  const { data: session } = useSession();
-  const [favorited, setFavorited] = useState(false);
   const [inCart, setInCart] = useState(false);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setInCart(readCartItems().includes(listingId));
   }, [listingId]);
-
-  useEffect(() => {
-    if (!session?.user) return;
-
-    const checkBookmark = async () => {
-      try {
-        const res = await fetch('/api/bookmarks?limit=1000');
-        if (!res.ok) return;
-        const data = await res.json();
-        setFavorited(data.bookmarks?.some((bookmark: any) => bookmark.listing?._id === listingId) || false);
-      } catch {}
-    };
-
-    checkBookmark();
-  }, [session?.user, listingId]);
-
-  const toggleSaved = async () => {
-    if (!session?.user) {
-      window.location.href = '/auth/signin';
-      return;
-    }
-
-    setSaving(true);
-    try {
-      if (favorited) {
-        await fetch(`/api/bookmarks/${listingId}`, { method: 'POST' });
-        setFavorited(false);
-      } else {
-        const res = await fetch('/api/bookmarks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ listingId })
-        });
-        if (res.ok || res.status === 409) setFavorited(true);
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const toggleCart = () => {
     const items = readCartItems();
@@ -81,39 +37,26 @@ export default function ListingActions({ listingId, isOwner }: { listingId: stri
   if (isOwner) {
     return (
       <div className="grid gap-3">
-        <Link href="/messages" className="btn-primary flex w-full py-4">View Messages from Buyers</Link>
-        <Link href="/bookmarks" className="btn-secondary flex w-full py-4">Open Saved Items</Link>
+        <a href="/messages" className="btn-primary flex w-full py-4">View Messages from Buyers</a>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={toggleCart}
-          className={inCart ? 'btn-secondary w-full py-4' : 'btn-primary w-full py-4'}
-        >
-          {inCart ? 'Remove from Cart' : 'Add to Cart'}
-        </button>
-        <button
-          type="button"
-          onClick={toggleSaved}
-          disabled={saving}
-          className="btn-secondary w-full py-4 disabled:translate-y-0"
-        >
-          {saving ? 'Saving...' : favorited ? 'Saved Item' : 'Save Item'}
-        </button>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Link href="/cart" className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-black text-slate-700 transition-colors hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-teal-300/40 dark:hover:bg-teal-300/10">
-          Go to Cart
-        </Link>
-        <Link href="/bookmarks" className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm font-black text-slate-700 transition-colors hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-teal-300/40 dark:hover:bg-teal-300/10">
-          View Saved Items
-        </Link>
-      </div>
+    <div className="grid gap-3">
+      <button
+        type="button"
+        onClick={toggleCart}
+        className="flex min-h-14 w-full items-center justify-center rounded-xl bg-teal-500 px-5 py-4 text-base font-black text-white shadow-[0_16px_34px_rgba(20,184,166,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-teal-400 hover:shadow-[0_20px_42px_rgba(20,184,166,0.34)] focus:outline-none focus:ring-4 focus:ring-teal-500/20 dark:text-slate-950"
+      >
+        {inCart ? 'Remove from Cart' : 'Add to Cart'}
+      </button>
+      <a
+        href={`/listings/${listingId}/chat`}
+        className="flex min-h-12 w-full items-center justify-center rounded-xl border border-slate-200 bg-white/70 px-5 py-3 text-sm font-black text-slate-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-teal-300/40 dark:hover:bg-teal-300/10"
+      >
+        Message Seller
+      </a>
     </div>
   );
 }
