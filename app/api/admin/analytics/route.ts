@@ -73,6 +73,18 @@ export async function GET(req: NextRequest) {
       { $group: { _id: null, avgPrice: { $avg: '$price' } } }
     ]) as any;
 
+    const revenue = await Listing.aggregate([
+      { $match: { status: 'sold' } },
+      { $group: { _id: null, total: { $sum: '$price' } } }
+    ]) as any;
+
+    const topCategories = await Listing.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 }, value: { $sum: '$price' } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+      { $project: { _id: 0, category: '$_id', count: 1, value: 1 } }
+    ]) as any;
+
     return NextResponse.json({
       users: {
         total: totalUsers,
@@ -86,8 +98,10 @@ export async function GET(req: NextRequest) {
       reports: reportStats,
       engagement: {
         totalViews: totalViews[0]?.totalViews || 0,
-        avgListingPrice: avgListingPrice[0]?.avgPrice || 0
-      }
+        avgListingPrice: avgListingPrice[0]?.avgPrice || 0,
+        revenue: revenue[0]?.total || 0
+      },
+      topCategories
     });
   } catch (error) {
     console.error('GET /api/admin/analytics error:', error);
